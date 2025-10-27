@@ -91,11 +91,14 @@ mkdir src\ServerScriptService\Server\Network
 
 copy /y NUL src\ReplicatedStorage\Client\Entry\ClientDependencies.luau >NUL
 copy /y NUL src\ReplicatedStorage\Client\Entry\init.luau >NUL
+copy /y NUL src\ReplicatedStorage\Client\Network\init.luau >NUL
 
 copy /y NUL src\ServerScriptService\Server\Entry\ServerDependencies.luau >NUL
 copy /y NUL src\ServerScriptService\Server\Entry\init.luau >NUL
 copy /y NUL src\ServerScriptService\Server\OnPlayerJoined.luau >NUL
+copy /y NUL src\ServerScriptService\Server\Network\init.luau >NUL
 copy /y NUL main.blink >NUL
+copy /y NUL .luaurc >NUL
 
 (
 echo local ReplicatedStorage = game^:GetService^(^"ReplicatedStorage^"^)
@@ -179,8 +182,8 @@ echo react-roblox = "jsdotlua/react-roblox@17.2.1"
 wally install
 
 (
-echo option ClientOutput = "src/ReplicatedStorage/Client/Network/init.luau"
-echo option ServerOutput = "src/ServerScriptService/Server/Network/init.luau"
+echo option ClientOutput = "src/ReplicatedStorage/Client/Network/blink.luau"
+echo option ServerOutput = "src/ServerScriptService/Server/Network/blink.luau"
 echo.  
 echo event MyFirstEvent {
 echo     from: Server,
@@ -192,3 +195,12 @@ echo.
 ) > main.blink
 
 blink main.blink
+
+(
+echo {
+echo 	"languageMode": "nonstrict",
+echo 	"lint": { "LocalUnused": false, "FunctionUnused": false, "ImportUnused":false, "LocalShadow": false },
+echo 	"lintErrors": true,
+echo 	"globals": ["expect"]
+echo }
+) > .luaurc
