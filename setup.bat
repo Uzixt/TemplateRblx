@@ -76,6 +76,7 @@ mkdir assets
 mkdir assets\build
 mkdir assets\docs
 mkdir assets\models
+mkdir assets\images
 
 mkdir src\ReplicatedStorage
 mkdir src\ReplicatedFirst
@@ -228,4 +229,3 @@ echo }
 ) > .luaurc
 
 rojo sourcemap default.project.json --output sourcemap.json
-
