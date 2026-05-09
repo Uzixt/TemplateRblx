@@ -69,6 +69,9 @@ echo }
 ) > default.project.json
 
 mkdir src
+mkdir scripts
+mkdir scripts\serve
+mkdir blink
 mkdir assets
 mkdir assets\build
 mkdir assets\docs
@@ -98,8 +101,11 @@ copy /y NUL src\ServerScriptService\Server\Entry\ServerDependencies.luau >NUL
 copy /y NUL src\ServerScriptService\Server\Entry\init.luau >NUL
 copy /y NUL src\ServerScriptService\Server\OnPlayerJoined.luau >NUL
 copy /y NUL src\ServerScriptService\Server\Network\init.luau >NUL
-copy /y NUL main.blink >NUL
+copy /y NUL blink\main.blink >NUL
 copy /y NUL .luaurc >NUL
+
+copy /y NUL scripts/blink.bat >NUL
+copy /y NUL scripts/serve/main.bat >NUL
 
 (
 echo local ReplicatedStorage = game^:GetService^(^"ReplicatedStorage^"^)
@@ -183,8 +189,8 @@ echo react-roblox = "jsdotlua/react-roblox@17.2.1"
 wally install
 
 (
-echo option ClientOutput = "src/ReplicatedStorage/Client/Network/blink.luau"
-echo option ServerOutput = "src/ServerScriptService/Server/Network/blink.luau"
+echo option ClientOutput = "../src/ReplicatedStorage/Client/Network/blink.luau"
+echo option ServerOutput = "../src/ServerScriptService/Server/Network/blink.luau"
 echo.  
 echo event MyFirstEvent {
 echo     from: Server,
@@ -193,9 +199,24 @@ echo     call: SingleAsync,
 echo     data: string
 echo }
 echo. 
-) > main.blink
+) > blink\main.blink
 
-blink main.blink
+::blink blink/main.blink
+
+
+(
+echo @echo off
+echo blink blink/main
+) > scripts\blink.bat
+
+call scripts/blink
+
+(
+echo @echo off
+echo rojo sourcemap default.project.json --output sourcemap.json
+echo wally-package-types --sourcemap sourcemap.json Packages/
+echo rojo serve default.project.json
+) > scripts\serve\main.bat
 
 (
 echo {
@@ -205,3 +226,5 @@ echo 	"lintErrors": true,
 echo 	"globals": ["expect"]
 echo }
 ) > .luaurc
+
+
