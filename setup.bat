@@ -109,6 +109,7 @@ copy /y NUL .luaurc >NUL
 
 copy /y NUL scripts\blink.bat >NUL
 copy /y NUL scripts\serve\main.bat >NUL
+copy /y NUL scripts\wally.bat >NUL
 
 (
 echo local ReplicatedStorage = game^:GetService^(^"ReplicatedStorage^"^)
@@ -266,8 +267,6 @@ echo react = "jsdotlua/react@17.2.1"
 echo react-roblox = "jsdotlua/react-roblox@17.2.1"
 ) >> wally.toml
 
-wally install
-
 (
 echo option ClientOutput = "../src/ReplicatedStorage/Client/Network/blink.luau"
 echo option ServerOutput = "../src/ServerScriptService/Server/Network/blink.luau"
@@ -294,7 +293,6 @@ call scripts/blink
 (
 echo @echo off
 echo rojo sourcemap default.project.json --output sourcemap.json
-echo wally-package-types --sourcemap sourcemap.json Packages/
 echo rojo serve default.project.json
 ) > scripts\serve\main.bat
 
@@ -307,7 +305,13 @@ echo 	"globals": ["expect"]
 echo }
 ) > .luaurc
 
-rojo sourcemap default.project.json --output sourcemap.json
-wally-package-types --sourcemap sourcemap.json Packages/
+(
+echo @echo off
+echo wally install
+echo rojo sourcemap default.project.json --output sourcemap.json
+echo wally-package-types --sourcemap sourcemap.json Packages/
+) > scripts\wally.bat
+
+call scripts/wally
 
 powershell -Command "Write-Host 'DONE INITIALISING TEMPLATE' -ForegroundColor Green"
