@@ -6,6 +6,7 @@ rokit init
 rokit add "1Axen/Blink"
 rokit add rojo
 rokit add "UpliftGames/wally"
+rokit add wally-package-types
 rokit install
 
 wally init
