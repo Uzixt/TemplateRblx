@@ -89,6 +89,7 @@ mkdir src\StarterPlayer\StarterCharacterScripts
 mkdir src\ReplicatedStorage\Client
 mkdir src\ReplicatedStorage\Client\Entry
 mkdir src\ReplicatedStorage\Client\Network
+mkdir src\ReplicatedStorage\Shared
 
 mkdir src\ServerScriptService\Server
 mkdir src\ServerScriptService\Server\Entry
@@ -97,6 +98,7 @@ mkdir src\ServerScriptService\Server\Network
 copy /y NUL src\ReplicatedStorage\Client\Entry\ClientDependencies.luau >NUL
 copy /y NUL src\ReplicatedStorage\Client\Entry\init.luau >NUL
 copy /y NUL src\ReplicatedStorage\Client\Network\init.luau >NUL
+copy /y NUL src\ReplicatedStorage\Shared\Tween.luau >NUL
 
 copy /y NUL src\ServerScriptService\Server\Entry\ServerDependencies.luau >NUL
 copy /y NUL src\ServerScriptService\Server\Entry\init.luau >NUL
@@ -105,8 +107,8 @@ copy /y NUL src\ServerScriptService\Server\Network\init.luau >NUL
 copy /y NUL blink\main.blink >NUL
 copy /y NUL .luaurc >NUL
 
-copy /y NUL scripts/blink.bat >NUL
-copy /y NUL scripts/serve/main.bat >NUL
+copy /y NUL scripts\blink.bat >NUL
+copy /y NUL scripts\serve\main.bat >NUL
 
 (
 echo local ReplicatedStorage = game^:GetService^(^"ReplicatedStorage^"^)
@@ -129,6 +131,83 @@ echo         require^(v^).Init^(^)
 echo     end^)
 echo end 
 ) > src\ReplicatedStorage\Client\Entry\init.luau
+
+(
+echo --// Abstraction for TweenService
+echo --// Written by @Uzixt
+echo.
+echo local Tween = {}
+echo local TweenService = game:GetService^("TweenService"^)
+echo.
+echo type Element = Instance
+echo type RecordEntry = ^({[string ^| number]: any}^)
+echo type Records = {[Element]: RecordEntry}
+echo.
+echo local function processTweenInfo^(Data: RecordEntry^): TweenInfo
+echo     local TweenInformation;
+echo     if typeof^(Data[#Data]^) ~= "TweenInfo" then
+echo         TweenInformation = TweenInfo.new^(.2^)
+echo     else
+echo         TweenInformation = Data[#Data]
+echo         Data[#Data] = nil
+echo     end
+echo     return TweenInformation
+echo end
+echo.
+echo Tween.Play = function^(InstanceTbl: Records, elementToWaitFor: Element?^)
+echo     local isThere = false;
+echo     for Element, Data in pairs^(InstanceTbl^) do
+echo         if Element == elementToWaitFor then
+echo             isThere = true
+echo             continue
+echo         end
+echo         TweenService:Create^(
+echo             Element,
+echo             processTweenInfo^(Data^),
+echo             Data
+echo         ^):Play^(^)
+echo     end
+echo.
+echo     if isThere and elementToWaitFor then
+echo         local Data = InstanceTbl[elementToWaitFor]
+echo         local toReturn = TweenService:Create^(
+echo             elementToWaitFor,
+echo             processTweenInfo^(Data^),
+echo             Data
+echo         ^)
+echo         toReturn:Play^(^)
+echo         return toReturn
+echo     end
+echo.
+echo     return
+echo end
+echo.
+echo --[[
+echo     USAGE:
+echo.
+echo     If no TweenInfo defined, it defaults to .2
+echo.
+echo     local myTween = Tween.Play^({
+echo         [Element] = ^{
+echo             Position = UDim2.new^(2,2,2,2^)
+echo         ^}
+echo     ^}, Element^)
+echo.
+echo     Tween.Play^({
+echo         [Element] = ^{
+echo             Size = ...,
+echo             TweenInfo.new^(5^)
+echo         ^},
+echo.
+echo         [AnotherElement] = ^{
+echo             Position = ...,
+echo         ^}
+@REM echo     ^})
+echo.
+echo ]]
+echo.
+echo return Tween
+) > src\ReplicatedStorage\Shared\Tween.luau
 
 (
 echo -- Entry point for the server
