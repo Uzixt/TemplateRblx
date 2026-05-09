@@ -227,4 +227,5 @@ echo 	"globals": ["expect"]
 echo }
 ) > .luaurc
 
+rojo sourcemap default.project.json --output sourcemap.json
 
